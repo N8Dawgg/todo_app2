@@ -1,8 +1,31 @@
 .panel_container {
   position: absolute;
-  width: 200px;
-  height: 300px;
   top: 0px;
   left: 0px;
-  border: solid 1px black;
+  /* border: solid 1px black; */
+}
+.panel_title_bar {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-style: outset;
+  border-width: 2px 2px 0px 2px;
+  border-color: rgb(51, 180, 167);
+  padding: 2px 0px 2px 8px;
+  background-color: turquoise;
+  min-width: 250px;
+  max-width: 325px;
+}
+.panel_body {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-style: outset;
+  border-width: 0px 2px 2px 2px;
+  border-color: rgb(225, 225, 225);
+  padding: 8px;
+  background-color: white;
+  min-width: 250px;
+  max-width: 325px;
+}
+.title_text {
+  user-select: none;
 }

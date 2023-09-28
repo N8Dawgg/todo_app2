@@ -1,8 +1,24 @@
+//Element.offsetWidth
+//Element.offsetHeight
+
 const createPanel = () => {
   let container = document.createElement("div");
   container.classList.add("panel_container");
-  container.addEventListener("mousedown", startDragging);
-  // container.addEventListener("mouseup", endDragging);
+
+  let panelTitleBar = document.createElement("div");
+  container.append(panelTitleBar);
+  panelTitleBar.classList.add("panel_title_bar");
+  panelTitleBar.addEventListener("mousedown", startDragging);
+
+  let panelTitleEditor = document.createElement("div");
+  panelTitleBar.append(panelTitleEditor);
+  panelTitleEditor.textContent = "Title";
+  panelTitleEditor.classList.add("title_text");
+  panelTitleEditor.addEventListener("dblclick", toggleTitleEditor);
+
+  let panelBody = document.createElement("div");
+  container.append(panelBody);
+  panelBody.classList.add("panel_body");
 
   let offsetX = 0;
   let offsetY = 0;
@@ -16,13 +32,59 @@ const createPanel = () => {
     thisObject.container.style.top = thisObject.posY.toString() + "px";
   }
 
-  function startDragging(e) {
-    draggingPanel = thisObject;
-    thisObject.offsetX = thisObject.posX - e.clientX;
-    thisObject.offsetY = thisObject.posY - e.clientY;
+  let edittingTitle = false;
+
+  function canDrag() {
+    if (!edittingTitle) {
+      return true;
+    }
+    return flase;
   }
 
-  let thisObject = { container, offsetX, offsetY, posX, posY, updatePosition };
+  const MAX_TITLE_LENGTH = 25;
+
+  function toggleTitleEditor() {
+    if (!edittingTitle) {
+      let newInput = document.createElement("input");
+      newInput.value = thisObject.panelTitleEditor.textContent;
+      thisObject.panelTitleBar.prepend(newInput);
+      thisObject.panelTitleEditor.remove();
+      thisObject.panelTitleEditor = newInput;
+      // newInput.type = "text";
+      newInput.select();
+      newInput.setAttribute("maxlength", MAX_TITLE_LENGTH);
+      newInput.addEventListener("focusout", toggleTitleEditor);
+    } else {
+      let newDiv = document.createElement("div");
+      newDiv.textContent = thisObject.panelTitleEditor.value;
+      newDiv.classList.add("title_text");
+      thisObject.panelTitleBar.prepend(newDiv);
+      thisObject.panelTitleEditor.remove();
+      thisObject.panelTitleEditor = newDiv;
+      newDiv.addEventListener("dblclick", toggleTitleEditor);
+    }
+    edittingTitle = !edittingTitle;
+  }
+
+  function startDragging(e) {
+    if (canDrag()) {
+      draggingPanel = thisObject;
+      thisObject.offsetX = thisObject.posX - e.clientX;
+      thisObject.offsetY = thisObject.posY - e.clientY;
+    }
+  }
+
+  let thisObject = {
+    container,
+    panelTitleBar,
+    panelTitleEditor,
+    offsetX,
+    offsetY,
+    posX,
+    posY,
+    edittingTitle,
+    updatePosition,
+  };
 
   return thisObject;
 };
@@ -30,16 +92,11 @@ const createPanel = () => {
 let draggingPanel = null;
 
 onmousemove = function (e) {
-  // console.log("mouse location:", e.clientX, e.clientY);
   if (draggingPanel != null) {
     draggingPanel.updatePosition(
       e.clientX + draggingPanel.offsetX,
       e.clientY + draggingPanel.offsetY
     );
-    // draggingPanel.container.style.top =
-    //   (e.clientY + draggingPanel.offsetY).toString() + "px";
-    // draggingPanel.container.style.left =
-    //   (e.clientX + draggingPanel.offsetX).toString() + "px";
   }
 };
 
